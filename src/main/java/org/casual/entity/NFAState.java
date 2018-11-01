@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.casual.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,12 +17,15 @@ import java.util.List;
 @AllArgsConstructor
 public class NFAState {
 
-    private long id;
+    /**
+     * the size of NFA states before it is added
+     */
+    private int id;
 
     /**
      * the key is the edge, the value is the id of next state
      */
-    private List<Pair<String, Long>> transitions;
+    private List<Pair<String, Integer>> transitions = new ArrayList<>();
 
     boolean accepted;
 }

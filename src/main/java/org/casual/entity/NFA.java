@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,23 @@ public class NFA {
 
     private NFAState start;
 
-    private List<NFAState> states;
+    private final List<NFAState> states = new ArrayList<>();
 
+    public int calcSize(){
+        return states.size();
+    }
+
+    /**
+     * find the state of given id
+     * @param id id of nfa state
+     * @return state, null if it doesn't exist
+     */
+    public NFAState findById(int id){
+        for (NFAState state : states) {
+            if (state.getId() == id){
+                return state;
+            }
+        }
+        return null;
+    }
 }
