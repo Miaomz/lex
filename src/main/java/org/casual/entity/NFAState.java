@@ -27,5 +27,17 @@ public class NFAState {
      */
     private List<Pair<String, Integer>> transitions = new ArrayList<>();
 
-    boolean accepted;
+    private boolean accepted;
+
+    /**
+     * only valid when it is accepted
+     */
+    private String tag;
+
+    public NFAState(int id, List<Pair<String, Integer>> transitions, boolean accepted) {
+        this.id = id;
+        this.transitions = transitions;
+        this.accepted = accepted;
+    }
+
 }

@@ -37,4 +37,13 @@ public class NFA {
         }
         return null;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < calcSize(); i++) {
+            sb.append(i).append(findById(i).getTransitions().toString()).append(System.lineSeparator());
+        }
+        return sb.toString();
+    }
 }

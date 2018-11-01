@@ -14,27 +14,27 @@ import static org.casual.util.ConstantString.WARNING;
  */
 public class RegexParser {
 
-    private List<Character> metas = new ArrayList<>(Arrays.asList('|', '·', '*', '(', ')', '{', '}'));
-
     /**
      * main function of this component
-     * @param regex presuming that all ·s have been added
+     * @param regex presuming that all ·(connects) have been added, {ref} has been replaced
      * @return NFA of this regex
      */
-    public NFA regexToNFA(final String regex){
+    public NFA regexToNFA(final String regex, final String tag){
         NFA nfa = new NFA();
         nfa.setStart(new NFAState(0, new ArrayList<>(Collections.singleton(new Pair<>(regex, 1))), false));
-        nfa.getStates().addAll(Arrays.asList(nfa.getStart(), new NFAState(1, new ArrayList<>(), true)));
+        nfa.getStates().addAll(Arrays.asList(nfa.getStart(), new NFAState(1, new ArrayList<>(), true, tag)));
 
-        Stack<Integer> toBeDivided = new Stack<>();
+        Deque<Integer> toBeDivided = new LinkedList<>();
         toBeDivided.push(0);
-        while (!toBeDivided.empty()){
+        while (!toBeDivided.isEmpty()){
             NFAState temp = nfa.findById(toBeDivided.pop());
             while (isDividable(temp)){
                 refine(nfa, temp);
             }
             for (Pair<String, Integer> pair : temp.getTransitions()) {
-                toBeDivided.push(pair.getVal());
+                if (isDividable(nfa.findById(pair.getVal()))){
+                    toBeDivided.push(pair.getVal());
+                }
             }
         }
         return nfa;
@@ -94,7 +94,7 @@ public class RegexParser {
         }
 
         //if the program reaches here, then the regex should be inalienable
-        if (!isDividable(regex)){
+        if (isDividable(regex)){
             System.err.println(WARNING);
         }
         return new ArrayList<>(Collections.singleton(regex));
@@ -109,14 +109,14 @@ public class RegexParser {
     private List<String> splitRegexWithOp(final String regex, final Character character){
         for (int i = 0; i < regex.length(); i++) {
             char ch = regex.charAt(i);
-            if (ch == '(' || ch == '{'){
+            if (ch == '('){
                 int jumpLen = calcJumpLen(regex, i);
                 if (jumpLen >= 0){
                     i = jumpLen;//let the pointer escape the parentheses
                 }
-            } else if (ch == character && ch != '*'){
+            } else if (ch == character && (ch == '|' || ch == '·')){
                 return new ArrayList<>(Arrays.asList(String.valueOf(ch), regex.substring(0, i), regex.substring(i+1)));
-            } else if (ch == character){//* is a relatively special operator
+            } else if (ch == character && ch == '*'){//* is a relatively special operator
                 return new ArrayList<>(Arrays.asList("*", regex.substring(0, regex.length()-1)));
             }
         }
@@ -130,20 +130,16 @@ public class RegexParser {
      * @return the next index that pointer should jump to, -1 if they fail to find matching parentheses
      */
     private int calcJumpLen(final String regex, final int initialIndex){
-        int roundCount = 0;
-        int curlyCount = 0;
-
-        char ch = regex.charAt(initialIndex);
+        int count = 0;
         for (int j = initialIndex; j < regex.length(); j++) {
+
             switch (regex.charAt(j)){
-                case '(': roundCount++; break;
-                case ')': roundCount--; break;
-                case '{': curlyCount++; break;
-                case '}': curlyCount--; break;
+                case '(': count++; break;
+                case ')': count--; break;
                 default:break;
             }
 
-            if ((ch == '(' && roundCount == 0) || (ch == '{' && curlyCount == 0)){
+            if (count == 0){
                 return j;
             }
         }
@@ -170,6 +166,6 @@ public class RegexParser {
      * @return if a regex can be divided
      */
     private boolean isDividable(final String regex){
-        return (regex.startsWith("{") && regex.endsWith("}")) || regex.length() <= 1;
+        return regex.length() > 1;
     }
 }
