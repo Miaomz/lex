@@ -41,6 +41,7 @@ public class RegexParserTest {
         assertEquals("[·, \n, t·\\·n]", method.invoke(parser, "\n·t·\\·n").toString());
         assertEquals("[·, t, \\·n]", method.invoke(parser, "t·\\·n").toString());
         assertEquals("[·, \\, n]", method.invoke(parser, "\\·n").toString());
+        assertEquals("[·, (a|b)*, a·(a|b)·(a|b)]", method.invoke(parser, "(a|b)*·a·(a|b)·(a|b)").toString());
     }
 
     @Test

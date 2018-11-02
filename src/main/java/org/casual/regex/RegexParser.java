@@ -82,7 +82,8 @@ public class RegexParser {
      * if there is no operator, it will be only one element
      */
     private List<String> splitRegex(String regex){
-        while (regex.startsWith("(") && regex.endsWith(")")){//strip the outer parentheses if possible
+        while (regex.startsWith("(")
+                && (getCorrespondingClose(regex, 0) == regex.length()-1)){//strip the OUTER parentheses if possible
             regex = regex.substring(1, regex.length()-1);
         }
 
@@ -152,6 +153,10 @@ public class RegexParser {
      * @return if a state can be divided
      */
     private boolean isDividable(final NFAState state){
+        if (state == null){
+            return false;
+        }
+
         for (Pair<String, Integer> stringIntegerPair : state.getTransitions()) {
             if (isDividable(stringIntegerPair.getKey())){
                 return true;
@@ -166,6 +171,33 @@ public class RegexParser {
      * @return if a regex can be divided
      */
     private boolean isDividable(final String regex){
-        return regex.length() > 1;
+        return regex != null && regex.length() > 1;
+    }
+
+    /**
+     * find a bracket's pair, including round, rectangular and curly brackets
+     * @param s string
+     * @param openIndex the index of open symbol
+     * @return the index of close symbol
+     */
+    private int getCorrespondingClose(final String s, int openIndex){
+        List<Character> openList = new ArrayList<>(Arrays.asList('(', '{', '['));
+        List<Character> closeList = new ArrayList<>(Arrays.asList(')', '}', ']'));
+
+        char open = s.charAt(openIndex);
+        char close = closeList.get(openList.indexOf(open));
+        int count = 1;
+        for (int i = openIndex+1; i < s.length(); i++) {
+            if (s.charAt(i) == open){
+                count ++;
+            } else if (s.charAt(i) == close){
+                count --;
+            }
+
+            if (count == 0){
+                return i;
+            }
+        }
+        return -1;
     }
 }
