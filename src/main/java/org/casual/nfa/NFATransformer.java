@@ -60,11 +60,18 @@ public class NFATransformer {
     }
 
 
+    /**
+     * find all transitions except mu-transition that appear in the nfa
+     * @param nfa nfa
+     * @return all transitions except mu-transition
+     */
     private Set<String> findAllTransitions(final NFA nfa){
         Set<String> allTransitions = new HashSet<>();
         for (NFAState state : nfa.getStates()) {
             for (Pair<String, Integer> pair : state.getTransitions()) {
-                allTransitions.add(pair.getKey());
+                if (!pair.getKey().isEmpty()){
+                    allTransitions.add(pair.getKey());
+                }
             }
         }
         return allTransitions;

@@ -4,7 +4,10 @@ import org.casual.entity.NFA;
 import org.casual.entity.NFAState;
 import org.casual.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.casual.util.ConstantString.WARNING;
 
@@ -24,17 +27,11 @@ public class RegexParser {
         nfa.setStart(new NFAState(0, new ArrayList<>(Collections.singleton(new Pair<>(regex, 1))), false));
         nfa.getStates().addAll(Arrays.asList(nfa.getStart(), new NFAState(1, new ArrayList<>(), true, tag)));
 
-        Deque<Integer> toBeDivided = new LinkedList<>();
-        toBeDivided.push(0);
-        while (!toBeDivided.isEmpty()){
-            NFAState temp = nfa.findById(toBeDivided.pop());
+        int count = 0;
+        while (count < nfa.calcSize()){
+            NFAState temp = nfa.findById(count++);
             while (isDividable(temp)){
                 refine(nfa, temp);
-            }
-            for (Pair<String, Integer> pair : temp.getTransitions()) {
-                if (isDividable(nfa.findById(pair.getVal()))){
-                    toBeDivided.push(pair.getVal());
-                }
             }
         }
         return nfa;
@@ -63,7 +60,8 @@ public class RegexParser {
                     break;
                 case "*":
                     NFAState loopState = new NFAState(nfa.calcSize(),
-                        new ArrayList<>(Arrays.asList(new Pair<>("", pair.getVal()), new Pair<>(splits.get(1), nfa.calcSize()))), false);
+                            new ArrayList<>(Arrays.asList(new Pair<>("", pair.getVal()), new Pair<>(splits.get(1), nfa.calcSize()))),
+                            false);
                     updatedTransitions.add(new Pair<>("", nfa.calcSize()));
                     nfa.getStates().add(loopState);
                     break;
@@ -111,7 +109,7 @@ public class RegexParser {
         for (int i = 0; i < regex.length(); i++) {
             char ch = regex.charAt(i);
             if (ch == '('){
-                int jumpLen = calcJumpLen(regex, i);
+                int jumpLen = getCorrespondingClose(regex, i);
                 if (jumpLen >= 0){
                     i = jumpLen;//let the pointer escape the parentheses
                 }
@@ -122,29 +120,6 @@ public class RegexParser {
             }
         }
         return new ArrayList<>();
-    }
-
-    /**
-     * find the matching bracket
-     * @param regex the whole regex
-     * @param initialIndex the pointer in the outer loop
-     * @return the next index that pointer should jump to, -1 if they fail to find matching parentheses
-     */
-    private int calcJumpLen(final String regex, final int initialIndex){
-        int count = 0;
-        for (int j = initialIndex; j < regex.length(); j++) {
-
-            switch (regex.charAt(j)){
-                case '(': count++; break;
-                case ')': count--; break;
-                default:break;
-            }
-
-            if (count == 0){
-                return j;
-            }
-        }
-        return -1;
     }
 
     /**
@@ -178,9 +153,9 @@ public class RegexParser {
      * find a bracket's pair, including round, rectangular and curly brackets
      * @param s string
      * @param openIndex the index of open symbol
-     * @return the index of close symbol
+     * @return the index of close symbol, -1 if they fail to find matching one
      */
-    private int getCorrespondingClose(final String s, int openIndex){
+    private int getCorrespondingClose(final String s, final int openIndex){
         List<Character> openList = new ArrayList<>(Arrays.asList('(', '{', '['));
         List<Character> closeList = new ArrayList<>(Arrays.asList(')', '}', ']'));
 

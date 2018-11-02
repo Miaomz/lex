@@ -42,6 +42,11 @@ public class RegexParserTest {
         assertEquals("[·, t, \\·n]", method.invoke(parser, "t·\\·n").toString());
         assertEquals("[·, \\, n]", method.invoke(parser, "\\·n").toString());
         assertEquals("[·, (a|b)*, a·(a|b)·(a|b)]", method.invoke(parser, "(a|b)*·a·(a|b)·(a|b)").toString());
+        assertEquals("[·, (a|b)*, (a·a|b·b)·(a|b)*]", method.invoke(parser, "(a|b)*·(a·a|b·b)·(a|b)*").toString());
+        assertEquals("[·, (a·a|b·b), (a|b)*]", method.invoke(parser, "(a·a|b·b)·(a|b)*").toString());
+        assertEquals("[|, a·a, b·b]", method.invoke(parser, "(a·a|b·b)").toString());
+        assertEquals("[·, a, a]", method.invoke(parser, "a·a").toString());
+
     }
 
     @Test
@@ -59,5 +64,8 @@ public class RegexParserTest {
 
         nfa = parser.regexToNFA(" ·\t·\n", "delimiter");
         assertEquals(4, nfa.calcSize());
+
+        nfa = parser.regexToNFA("(a|b)*·(a·a|b·b)·(a|b)*", "third");
+        assertEquals(8, nfa.calcSize());
     }
 }

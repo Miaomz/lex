@@ -26,10 +26,12 @@ public class NFATransformerTest {
         NFA nfa2 = parser.regexToNFA("((|a)·b*)*", "second");
         NFA merged = merger.mergeNFA(new ArrayList<>(Arrays.asList(nfa1, nfa2)));
         DFA dfa = nfaTransformer.transform(merged);
-        //System.out.println(dfa);
+        assertEquals(true, dfa.getStart().isAccepted());
 
         dfa = nfaTransformer.transform(parser.regexToNFA("(a|b)*·a·(a|b)·(a|b)", "casual"));
-        System.out.println(dfa);
         assertEquals(9, dfa.calcSize());
+
+        dfa = nfaTransformer.transform(parser.regexToNFA("(a|b)*·(a·a|b·b)·(a|b)*", "org"));
+        assertEquals(7, dfa.calcSize());
     }
 }
