@@ -48,7 +48,7 @@ public class PreProcess {
         if (i == -1 || regex.indexOf('}') > i){
             return i;
         } else {//irregular
-            System.err.println(WARNING);
+            System.err.println(WARNING + regex);
             return -1;
         }
     }
