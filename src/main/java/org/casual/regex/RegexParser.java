@@ -66,7 +66,7 @@ public class RegexParser {
                     nfa.getStates().add(loopState);
                     break;
                 default://the atom or reference
-                    updatedTransitions.add(new Pair<>(pair.getKey(), pair.getVal()));
+                    updatedTransitions.add(new Pair<>(splits.get(0), pair.getVal()));
                     break;
             }
         }

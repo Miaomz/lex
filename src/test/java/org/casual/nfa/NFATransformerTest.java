@@ -33,5 +33,6 @@ public class NFATransformerTest {
 
         dfa = nfaTransformer.transform(parser.regexToNFA("(a|b)*·(a·a|b·b)·(a|b)*", "org"));
         assertEquals(7, dfa.calcSize());
+        assertEquals("[1, 2, 3, 5, 7]", dfa.findById(6).getNfaStates().toString());
     }
 }

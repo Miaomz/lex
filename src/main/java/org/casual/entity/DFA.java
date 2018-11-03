@@ -3,6 +3,7 @@ package org.casual.entity;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,9 @@ import java.util.Set;
 @Data
 public class DFA {
 
+    /**
+     * start state and should have the id 0
+     */
     private DFAState start;
 
     private final List<DFAState> dfaStates = new ArrayList<>();
@@ -52,5 +56,13 @@ public class DFA {
 
     public void addState(DFAState state){
         this.dfaStates.add(state);
+    }
+
+    public Set<String> findAllTransition(){
+        Set<String> allTransitions = new HashSet<>();
+        for (DFAState dfaState : this.dfaStates) {
+            dfaState.getTransitions().forEach((key, val) -> allTransitions.add(key));
+        }
+        return allTransitions;
     }
 }

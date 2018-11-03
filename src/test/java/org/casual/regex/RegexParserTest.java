@@ -67,5 +67,8 @@ public class RegexParserTest {
 
         nfa = parser.regexToNFA("(a|b)*·(a·a|b·b)·(a|b)*", "third");
         assertEquals(8, nfa.calcSize());
+
+        nfa = parser.regexToNFA("(a)·(a|b)*", "fourth");
+        assertEquals(4, nfa.calcSize());
     }
 }
