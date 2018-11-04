@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author miaomuzhi
@@ -24,13 +21,19 @@ public class DFAState {
 
     private boolean accepted;
 
-    private String tag;
-
     /**
      * ids of the nfa states, binding to a specific NFA
      */
     private Set<Integer> nfaStates;
 
+    public DFAState(DFAState state){
+        this.id = state.getId();
+        this.accepted = state.isAccepted();
+        for (Map.Entry<String, Integer> entry : state.getTransitions().entrySet()) {
+            this.transitions.put(entry.getKey(), entry.getValue());
+        }
+        this.nfaStates = new HashSet<>(state.getNfaStates());
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -57,7 +60,6 @@ public class DFAState {
             NFAState nfaState = nfa.findById(nfaStateId);
             if (nfaState != null && nfaState.isAccepted()){
                 this.accepted = true;
-                this.tag = nfaState.getTag();
                 break;
             }
         }
@@ -70,7 +72,6 @@ public class DFAState {
                 "id=" + id + System.lineSeparator() +
                 ", transitions=" + transitions + System.lineSeparator() +
                 ", accepted=" + accepted + System.lineSeparator() +
-                ", tag='" + tag + '\'' + System.lineSeparator() +
                 ", nfaStates=" + nfaStates + System.lineSeparator() +
                 '}';
     }

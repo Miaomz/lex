@@ -38,10 +38,6 @@ public class LexParser {
         utilMethods = lines.stream().reduce((prev, temp) -> prev.concat(System.lineSeparator()).concat(temp)).orElse("");
     }
 
-    private String removeComments(String strWithComments){
-        return strWithComments.replaceAll("/\\*.*\\*/", "");
-    }
-
     /**
      *
      * @param content content without comments
@@ -97,6 +93,10 @@ public class LexParser {
             }
         }
         return lines.subList(linePointer+1, lines.size());
+    }
+
+    private String removeComments(String strWithComments){
+        return strWithComments.replaceAll("/\\*.*\\*/", "");
     }
 
     /**

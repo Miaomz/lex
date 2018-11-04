@@ -47,7 +47,7 @@ public class NFATransformer {
 
                 DFAState nextState = dfa.findByNFAStates(nextIds);
                 if (nextState == null){//need to add new DFA state
-                    nextState = new DFAState(dfa.calcSize(), new HashMap<>(), false, "", nextIds);
+                    nextState = new DFAState(dfa.calcSize(), new HashMap<>(), false, nextIds);
                     dfa.addState(nextState);
                 }
 
@@ -56,6 +56,13 @@ public class NFATransformer {
             }
             state.refreshAcceptability(nfa);
         }
+
+//        for (DFAState state : dfa.getDfaStates()) {
+//            for (Integer integer : state.getNfaStates()) {
+//                System.err.print(nfa.findById(integer).getTag() + " ");
+//            }
+//            System.err.println();
+//        }
         return dfa;
     }
 

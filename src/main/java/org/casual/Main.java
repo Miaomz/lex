@@ -1,6 +1,8 @@
 package org.casual;
 
+import org.casual.dfa.CodeGenerator;
 import org.casual.dfa.DFASimplifier;
+import org.casual.dfa.IdRegularizer;
 import org.casual.entity.DFA;
 import org.casual.entity.NFA;
 import org.casual.nfa.NFAMerger;
@@ -20,8 +22,8 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args){
-        if (args.length == 0){
-            System.err.println("No input file");
+        if (args.length != 2){
+            System.err.println("Illegal arguments");
             return;
         }
 
@@ -40,7 +42,12 @@ public class Main {
         }
 
         NFA merged = new NFAMerger().mergeNFA(nfaList);
-        DFA dfa = new DFASimplifier().simplifyDFA(new NFATransformer().transform(merged));
+
+        DFA dfa = new NFATransformer().transform(merged);
+
+        dfa = new DFASimplifier().simplifyDFA(dfa);
+        new IdRegularizer().regularize(dfa);
         System.out.println(dfa);
+        new CodeGenerator().generateCode(dfa, merged, lexParser, args[1]);
     }
 }
