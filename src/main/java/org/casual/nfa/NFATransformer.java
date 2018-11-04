@@ -56,13 +56,6 @@ public class NFATransformer {
             }
             state.refreshAcceptability(nfa);
         }
-
-//        for (DFAState state : dfa.getDfaStates()) {
-//            for (Integer integer : state.getNfaStates()) {
-//                System.err.print(nfa.findById(integer).getTag() + " ");
-//            }
-//            System.err.println();
-//        }
         return dfa;
     }
 

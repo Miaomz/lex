@@ -15,12 +15,6 @@ public class DFASimplifier {
 
     public DFA simplifyDFA(final DFA dfa){
         List<Set<DFAState>> stateSets = getStateSets(dfa);
-//        for (Set<DFAState> stateSet : stateSets) {
-//            for (DFAState state : stateSet) {
-//                System.out.print(state.getId() + ", ");
-//            }
-//            System.out.println();
-//        }
         return buildDFABySets(stateSets);
     }
 
@@ -30,11 +24,7 @@ public class DFASimplifier {
      * @return split subsets' list
      */
     private List<Set<DFAState>> getStateSets(final DFA dfa){
-        List<Set<DFAState>> stateSets = new ArrayList<>(Arrays.asList(new HashSet<DFAState>(), new HashSet<DFAState>()));//build two initial sets
-        for (DFAState state : dfa.getDfaStates()) {
-            stateSets.get((state.isAccepted() ? 1 : 0)).add(state);
-        }
-
+        List<Set<DFAState>> stateSets = buildInitialSets(dfa);
         final Set<String> allTransitions = dfa.findAllTransition();
 
         boolean isAnySetDividable = true;
@@ -63,9 +53,13 @@ public class DFASimplifier {
         DFA simplifiedDfa = new DFA();//in the following steps, we will always choose the smallest one as the representative
         for (Set<DFAState> stateSet : stateSets) {
             DFAState representative = new DFAState((DFAState) stateSet.toArray()[0]);//ensure that the old data is effectively final
-            representative.setId(findMinIdInEquSet(stateSet, representative.getId()));
+            representative.setId(findMinIdInEquSet(stateSet, representative.getId()));//choose id
 
-            for (Map.Entry<String, Integer> entry : representative.getTransitions().entrySet()) {//set transition
+            for (DFAState dfaState : stateSet) {//choose tags
+                representative.getNfaStates().addAll(dfaState.getNfaStates());
+            }
+
+            for (Map.Entry<String, Integer> entry : representative.getTransitions().entrySet()) {//choose transitions
                 for (Set<DFAState> set : stateSets) {
                     int minId;
                     if ((minId = findMinIdInEquSet(set, entry.getValue())) >= 0){
@@ -80,6 +74,29 @@ public class DFASimplifier {
             simplifiedDfa.addState(representative);
         }
         return simplifiedDfa;
+    }
+
+    private List<Set<DFAState>> buildInitialSets(final DFA dfa){
+        List<Set<DFAState>> stateSets = new ArrayList<>(Collections.singleton(new HashSet<>()));
+        for (DFAState state : dfa.getDfaStates()) {
+            if (!state.isAccepted()){
+                stateSets.get(0).add(state);
+            } else {
+                boolean isAdded = false;
+                for (int i = 1; i < stateSets.size(); i++) {
+                    if ((stateSets.get(i).toArray()[0]).equals(state)){//no stateSet is empty except the first one
+                        stateSets.get(i).add(state);
+                        isAdded = true;
+                        break;
+                    }
+                }
+
+                if (!isAdded){
+                    stateSets.add(new HashSet<>(Collections.singleton(state)));
+                }
+            }
+        }
+        return stateSets;
     }
 
     /**

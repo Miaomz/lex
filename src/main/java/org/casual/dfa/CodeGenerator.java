@@ -28,6 +28,7 @@ public class CodeGenerator {
             addTransition(dfa, i, dataAdder);
             addTag(dfa, i, dataAdder, nfa, parser);
         }
+        addPattern(parser, dataAdder);
         content = content.replace("/*The DFA data injection*/", dataAdder.toString());
 
         content = content.replace("/*The DFA return methods*/", addReturnMethods(parser));
@@ -64,6 +65,12 @@ public class CodeGenerator {
         }
     }
 
+    private void addPattern(LexParser parser, StringBuilder sb){
+        for (int i = parser.getRegexWithRef().size()-parser.getTags().size(); i < parser.getRegexWithRef().size(); i++) {
+            sb.append("patterns.add(\"").append(parser.getRegexWithRef().get(i).getKey()).append("\");\n");
+        }
+    }
+
     private String addReturnMethods(final LexParser parser){
         StringBuilder methodAdder = new StringBuilder(10000);
         methodAdder.append("private static Consts getReturn(int index) {\n\tswitch(index){\n");
@@ -72,7 +79,7 @@ public class CodeGenerator {
             String method = parser.getTags().get(parser.getRegexWithRef().get(index).getKey()).getVal();
             methodAdder.append("case ").append(i).append(":").append(method).append(System.lineSeparator());
         }
-        methodAdder.append("}System.out.println(index); return null;}").append(System.lineSeparator());
+        methodAdder.append("}return null;}").append(System.lineSeparator());
         return methodAdder.toString();
     }
 

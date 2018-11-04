@@ -22,6 +22,10 @@ public class MyLexer {
      */
     private static List<List<String>> tags = new ArrayList<>();
 
+    /**
+     * index is the priority, String is the tag of pattern
+     */
+    private static List<String> patterns = new ArrayList<>();
 
     public static void main(String[] args){
         if (args.length != 2){
@@ -52,7 +56,7 @@ public class MyLexer {
             }
 
             String tag = tags.get(prev).get(0);
-            Consts consts = getReturn(prev);//prev is the index of tag
+            Consts consts = getReturn(patterns.indexOf(tag));//prev is NOT the index of tag in LEX PROGRAM
             if (consts != Consts.WS){
                 output.append('<').append(consts).append(", ").append(content.substring(outerPointer, innerPointer)).append(">\n");
             }
@@ -60,8 +64,6 @@ public class MyLexer {
         }
 
         writeFile(args[1], output.toString());
-        System.out.println(transitions);
-        System.out.println(tags);
     }
 
     private static void addData(){

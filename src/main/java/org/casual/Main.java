@@ -2,7 +2,7 @@ package org.casual;
 
 import org.casual.dfa.CodeGenerator;
 import org.casual.dfa.DFASimplifier;
-import org.casual.dfa.IdRegularizer;
+import org.casual.dfa.IdRegularizing;
 import org.casual.entity.DFA;
 import org.casual.entity.NFA;
 import org.casual.nfa.NFAMerger;
@@ -40,14 +40,11 @@ public class Main {
             Pair<String, String> pair = lexParser.getRegexWithRef().get(firstPatternIndex);
             nfaList.add(regexParser.regexToNFA(pair.getVal(), pair.getKey()));
         }
-
         NFA merged = new NFAMerger().mergeNFA(nfaList);
 
         DFA dfa = new NFATransformer().transform(merged);
-
         dfa = new DFASimplifier().simplifyDFA(dfa);
-        new IdRegularizer().regularize(dfa);
-        System.out.println(dfa);
+        new IdRegularizing().regularize(dfa);
         new CodeGenerator().generateCode(dfa, merged, lexParser, args[1]);
     }
 }

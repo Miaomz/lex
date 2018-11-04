@@ -12,7 +12,7 @@ import java.util.Map;
  * @author miaomuzhi
  * @since 2018/11/4
  */
-public class IdRegularizer {
+public class IdRegularizing {
 
     public void regularize(final DFA dfa){
         Integer[] ids = new Integer[dfa.calcSize()];
