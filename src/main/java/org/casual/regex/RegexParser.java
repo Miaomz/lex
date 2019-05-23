@@ -108,7 +108,9 @@ public class RegexParser {
     private List<String> splitRegexWithOp(final String regex, final Character character){
         for (int i = 0; i < regex.length(); i++) {
             char ch = regex.charAt(i);
-            if (ch == '('){
+            if (ch == '\\') {
+                i++;
+            } else if (ch == '('){
                 int jumpLen = getCorrespondingClose(regex, i);
                 if (jumpLen >= 0){
                     i = jumpLen;//let the pointer escape the parentheses
@@ -146,7 +148,17 @@ public class RegexParser {
      * @return if a regex can be divided
      */
     private boolean isDividable(final String regex){
-        return regex != null && regex.length() > 1;
+        if (regex == null){
+            return false;
+        }
+
+        int numOfSlash = 0;
+        for (Character c: regex.toCharArray()) {
+            if (c == '\\'){
+                numOfSlash ++;
+            }
+        }
+        return regex.length() - numOfSlash > 1;
     }
 
     /**

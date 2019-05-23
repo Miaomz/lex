@@ -1,9 +1,9 @@
-package lex;
+package lexer;
 
 import java.io.*;
 import java.util.*;
 
-import static lex.MyLexer.Consts.*;
+import static lexer.MyLexer.Consts.*;
 
 /**
  * @author miaomuzhi
@@ -57,7 +57,7 @@ public class MyLexer {
 
             String tag = tags.get(prev).get(0);
             Consts consts = getReturn(patterns.indexOf(tag));//prev is NOT the index of tag in LEX PROGRAM
-            if (consts != Consts.WS){
+            if (consts.ordinal() != 0){
                 output.append('<').append(consts).append(", ").append(content.substring(outerPointer, innerPointer)).append(">\n");
             }
             outerPointer = innerPointer;

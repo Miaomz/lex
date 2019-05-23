@@ -1,6 +1,6 @@
 %{
     /*definition of manifest constants*/
-    WS, RESERVED, COLON, IF, ELSE, ID, NUMBER, RELOP
+    WS, RESERVED, METHOD, COLON, IF, ELSE, ID, NUMBER, OPERATOR, DOT, ASSIGN, RELOP
 %}
 
 /*regular definition*/
@@ -15,12 +15,16 @@ number {digit}·{digit}*·(|.·{digit}*)|-·{digit}·{digit}*·(|.·{digit}*)
 %%
 
 {ws} {return WS;}
-i·n·t|v·o·i·d|d·o·u·b·l·e|c·h·a·r|r·e·t·u·r·n|e·n·d {return RESERVED;}
+i·n·t|v·o·i·d|d·o·u·b·l·e|c·h·a·r|r·e·t·u·r·n|e·n·d|d·e·f|c·l·a·s·s {return RESERVED;}
+{id}·\(·{id}*·\) {return METHOD;}
 : {return COLON;}
 i·f {return IF;}
 e·l·s·e {return ELSE;}
 {id} {installID(); return ID;}
 {number} {installNum(); return NUMBER;}
++|-|\*|% {return OPERATOR;}
+. {return DOT;}
+= {return ASSIGN;}
 < {return RELOP;}
 > {return RELOP;}
 =·= {return RELOP;}

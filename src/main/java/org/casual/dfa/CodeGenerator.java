@@ -42,7 +42,7 @@ public class CodeGenerator {
         for (Map.Entry<String, Integer> entry : dfaState.getTransitions().entrySet()) {
             if (!entry.getKey().equals(System.lineSeparator())){
                 dataAdder.append("transitions.get(").append(i).append(").put(\"")
-                        .append(entry.getKey()).append("\", ").append(entry.getValue()).append(");\n");
+                        .append(removeSlash(entry.getKey())).append("\", ").append(entry.getValue()).append(");\n");
             } else {
                 dataAdder.append("transitions.get(").append(i).append(").put(System.lineSeparator(), ").append(entry.getValue()).append(");\n");
             }
@@ -61,13 +61,13 @@ public class CodeGenerator {
         }
         List<String> sortedTags = map2List(tags);
         for (String sortedTag : sortedTags) {
-            dataAdder.append("tags.get(").append(i).append(").add(\"").append(sortedTag).append("\");\n");
+            dataAdder.append("tags.get(").append(i).append(").add(\"").append(removeSlash(sortedTag)).append("\");\n");
         }
     }
 
     private void addPattern(LexParser parser, StringBuilder sb){
         for (int i = parser.getRegexWithRef().size()-parser.getTags().size(); i < parser.getRegexWithRef().size(); i++) {
-            sb.append("patterns.add(\"").append(parser.getRegexWithRef().get(i).getKey()).append("\");\n");
+            sb.append("patterns.add(\"").append(removeSlash(parser.getRegexWithRef().get(i).getKey())).append("\");\n");
         }
     }
 
@@ -104,4 +104,7 @@ public class CodeGenerator {
         return new ArrayList<>(Arrays.asList(tagsList));
     }
 
+    private String removeSlash(String str){
+        return str.replace("\\", "");
+    }
 }

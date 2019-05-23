@@ -6,6 +6,6 @@
 3. the %% line that separates the transform rules should contain nothing more
 
 ## Regular Expression
-1. my lex supports {}, (), |, *, ·, \. These operators are NOT ordered by priority.
+1. my lex supports {}, (), |, *, ·. These operators are NOT ordered by priority.
 2. empty string denotes ε in the implementation
 3. The tag and definition of regex must be separated by ONE blank. And this line should be immediately ended by a lineSeparator.
